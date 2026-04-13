@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Тарифы и абонементы{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-card-checklist"></i> Тарифные планы</h2>
+
+<div class="row g-4">
+    {% for plan in plans %}
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header text-center">
+                    <span class="badge bg-primary">{{ plan.get_plan_type_display }}</span>
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ plan.name }}</h5>
+                    <p class="display-6">{{ plan.price|floatformat:0 }} ₽</p>
+                    <ul class="list-unstyled text-start">
+                        <li><i class="bi bi-clock"></i> {{ plan.duration_days }} дней</li>
+                        <li><i class="bi bi-repeat"></i>
+                            {% if plan.visits_limit %}
+                                {{ plan.visits_limit }} посещений
+                            {% else %}
+                                безлимит
+                            {% endif %}
+                        </li>
+                    </ul>
+                    {% if plan.description %}
+                        <p class="text-muted small">{{ plan.description }}</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'subscriptions:plan_detail' plan.id %}" class="btn btn-primary">Подробнее</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">Активных тарифов сейчас нет.</div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

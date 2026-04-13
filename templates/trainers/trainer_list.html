@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Тренеры{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-person-badge"></i> Наши тренеры</h2>
+
+<div class="btn-group mb-4 flex-wrap">
+    <a href="{% url 'trainers:list' %}" class="btn btn-sm btn-outline-secondary {% if not active_spec %}active{% endif %}">
+        Все
+    </a>
+    {% for s in specializations %}
+        <a href="?specialization={{ s.id }}" class="btn btn-sm btn-outline-secondary {% if active_spec == s.id %}active{% endif %}">
+            {{ s.name }}
+        </a>
+    {% endfor %}
+</div>
+
+<div class="row g-4">
+    {% for trainer in trainers %}
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        {% if trainer.user.photo %}
+                            <img src="{{ trainer.user.photo.url }}" class="rounded-circle me-3" width="60" height="60" style="object-fit: cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3"
+                                 style="width: 60px; height: 60px; font-size: 1.2rem;">
+                                {{ trainer.user.first_name|slice:":1" }}{{ trainer.user.last_name|slice:":1" }}
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h5 class="mb-0">{{ trainer.user.get_full_name|default:trainer.user.username }}</h5>
+                            <small class="text-muted">{{ trainer.experience_years }} лет опыта</small>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        {% for spec in trainer.specializations.all %}
+                            <span class="badge bg-primary">{{ spec.name }}</span>
+                        {% endfor %}
+                    </div>
+                    <p class="text-muted small">{{ trainer.bio|default:""|truncatechars:120 }}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'trainers:detail' trainer.id %}" class="btn btn-sm btn-outline-primary w-100">
+                        Профиль и расписание
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12"><div class="alert alert-info">Тренеров не найдено.</div></div>
+    {% endfor %}
+</div>
+{% endblock %}
