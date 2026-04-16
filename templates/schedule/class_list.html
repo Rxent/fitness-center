@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Расписание тренировок{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0"><i class="bi bi-calendar-week"></i> Расписание тренировок</h2>
+</div>
+
+<form method="get" class="card card-body mb-4 bg-white shadow-sm">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <label class="form-label">Тренер</label>
+            <select name="trainer" class="form-select">
+                <option value="">Все</option>
+                {% for t in trainers %}
+                    <option value="{{ t.id }}" {% if filters.trainer == t.id|stringformat:"s" %}selected{% endif %}>
+                        {{ t.user.get_full_name|default:t.user.username }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Зал</label>
+            <select name="room" class="form-select">
+                <option value="">Все</option>
+                {% for r in rooms %}
+                    <option value="{{ r.id }}" {% if filters.room == r.id|stringformat:"s" %}selected{% endif %}>
+                        {{ r.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Дата с</label>
+            <input type="date" name="date_from" value="{{ filters.date_from }}" class="form-control">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">по</label>
+            <input type="date" name="date_to" value="{{ filters.date_to }}" class="form-control">
+        </div>
+        <div class="col-md-2 d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-primary flex-grow-1">Фильтр</button>
+            <a href="{% url 'schedule:class_list' %}" class="btn btn-outline-secondary">×</a>
+        </div>
+    </div>
+</form>
+
+{% if classes %}
+    <div class="table-responsive bg-white shadow-sm rounded">
+        <table class="table mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Время</th>
+                    <th>Тренировка</th>
+                    <th>Тренер</th>
+                    <th>Зал</th>
+                    <th>Мест</th>
+                    <th class="text-end">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tc in classes %}
+                    <tr>
+                        <td>
+                            <strong>{{ tc.start_time|date:"d.m" }}</strong>
+                            {{ tc.start_time|date:"H:i" }}–{{ tc.end_time|date:"H:i" }}
+                        </td>
+                        <td>
+                            <a href="{% url 'schedule:class_detail' tc.id %}" class="text-decoration-none">
+                                <strong>{{ tc.name }}</strong>
+                            </a>
+                        </td>
+                        <td>{{ tc.trainer|default:"—" }}</td>
+                        <td>{{ tc.room|default:"—" }}</td>
+                        <td>
+                            <span class="badge bg-{% if tc.taken >= tc.max_participants %}danger{% else %}success{% endif %}">
+                                {{ tc.taken }}/{{ tc.max_participants }}
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            {% if tc.id in enrolled_ids %}
+                                <span class="badge bg-info">Вы записаны</span>
+                            {% endif %}
+                            <a href="{% url 'schedule:class_detail' tc.id %}" class="btn btn-sm btn-outline-primary">
+                                Подробнее
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info">По выбранным фильтрам тренировок не найдено.</div>
+{% endif %}
+{% endblock %}
