@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="h3 mb-4">Отчёты</h1>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Посещаемость тренировок</h5>
+        <p class="card-text text-muted">Сколько клиентов было записано и сколько реально пришло. С фильтром по тренеру и периоду.</p>
+      </div>
+      <div class="card-footer bg-transparent">
+        <a class="btn btn-primary w-100" href="{% url 'reports:attendance' %}">Открыть</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Выручка</h5>
+        <p class="card-text text-muted">Платежи за период, разбивка по тарифам и способам оплаты, итоговая сумма.</p>
+      </div>
+      <div class="card-footer bg-transparent">
+        <a class="btn btn-primary w-100" href="{% url 'reports:revenue' %}">Открыть</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Загрузка тренеров</h5>
+        <p class="card-text text-muted">Сколько тренировок провёл каждый тренер, сколько отменил и сколько клиентов посетило.</p>
+      </div>
+      <div class="card-footer bg-transparent">
+        <a class="btn btn-primary w-100" href="{% url 'reports:trainer_load' %}">Открыть</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-4 text-muted small">
+  На любой странице отчёта можно скачать результат в Excel или PDF — кнопки рядом с фильтром.
+</div>
+{% endblock %}
