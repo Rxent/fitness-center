@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Мой кабинет{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Добро пожаловать, {{ user.get_full_name|default:user.username }}!</h2>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">Мой абонемент</div>
+            <div class="card-body">
+                {% if active_subscription %}
+                    <h5>{{ active_subscription.plan.name }}</h5>
+                    <p class="text-muted mb-2">
+                        Действует до <strong>{{ active_subscription.end_date|date:"d.m.Y" }}</strong>
+                        ({{ active_subscription.days_left }} дн. осталось)
+                    </p>
+                    {% if active_subscription.plan.visits_limit %}
+                        <p>Использовано посещений:
+                            <strong>{{ active_subscription.visits_used }} / {{ active_subscription.plan.visits_limit }}</strong>
+                        </p>
+                    {% else %}
+                        <p>Безлимитный доступ</p>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted">Нет активного абонемента.</p>
+                    <p class="small">Обратитесь на ресепшн для оформления.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">История абонементов</div>
+            <ul class="list-group list-group-flush">
+                {% for s in subscriptions %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ s.plan.name }}<br>
+                            <small class="text-muted">
+                                {{ s.start_date|date:"d.m.Y" }} – {{ s.end_date|date:"d.m.Y" }}
+                            </small>
+                        </span>
+                        <span class="badge bg-secondary align-self-center">{{ s.get_status_display }}</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Абонементов ещё не было.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header">Мои записи на тренировки</div>
+    <ul class="list-group list-group-flush">
+        {% for e in enrollments %}
+            <li class="list-group-item d-flex justify-content-between">
+                <div>
+                    <strong>{{ e.training_class.name }}</strong><br>
+                    <small class="text-muted">
+                        {{ e.training_class.start_time|date:"d.m.Y H:i" }}
+                        · {{ e.training_class.trainer|default:"тренер не назначен" }}
+                        · {{ e.training_class.room|default:"зал не указан" }}
+                    </small>
+                </div>
+                <span class="badge bg-info align-self-center">{{ e.get_status_display }}</span>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">Вы не записаны на тренировки.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

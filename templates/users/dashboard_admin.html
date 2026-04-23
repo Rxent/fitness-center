@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Администратор — рабочий стол{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Сводка</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-bg-primary">
+            <div class="card-body">
+                <h6 class="card-subtitle">Активных клиентов</h6>
+                <p class="display-6 mb-0">{{ clients_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-success">
+            <div class="card-body">
+                <h6 class="card-subtitle">Тренеров</h6>
+                <p class="display-6 mb-0">{{ trainers_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-warning">
+            <div class="card-body">
+                <h6 class="card-subtitle">Действующих абонементов</h6>
+                <p class="display-6 mb-0">{{ active_subscriptions }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-info">
+            <div class="card-body">
+                <h6 class="card-subtitle">Ближайшие тренировки</h6>
+                <p class="display-6 mb-0">{{ upcoming_classes|length }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">Ближайшие тренировки</div>
+            <ul class="list-group list-group-flush">
+                {% for tc in upcoming_classes %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>
+                            <strong>{{ tc.name }}</strong><br>
+                            <small class="text-muted">
+                                {{ tc.start_time|date:"d.m.Y H:i" }}
+                                — {{ tc.trainer|default:"—" }}
+                            </small>
+                        </span>
+                        <span class="badge bg-secondary align-self-center">{{ tc.get_status_display }}</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Нет запланированных тренировок.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">Последние платежи</div>
+            <ul class="list-group list-group-flush">
+                {% for p in recent_payments %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>
+                            {{ p.subscription.client }}<br>
+                            <small class="text-muted">{{ p.paid_at|date:"d.m.Y H:i" }} · {{ p.get_method_display }}</small>
+                        </span>
+                        <span class="fw-bold align-self-center">{{ p.amount }} ₽</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Платежей пока нет.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-light mt-4 border">
+    Управление данными доступно через
+    <a href="{% url 'admin:index' %}" class="fw-bold">админ-панель</a>.
+</div>
+{% endblock %}

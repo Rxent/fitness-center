@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Тренер — рабочий стол{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Добрый день, {{ user.get_full_name|default:user.username }}!</h2>
+
+{% if trainer %}
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted">Специализации</h6>
+                    {% for spec in trainer.specializations.all %}
+                        <span class="badge bg-secondary">{{ spec.name }}</span>
+                    {% empty %}
+                        <span class="text-muted">не указаны</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted">Опыт</h6>
+                    <p class="h4 mb-0">{{ trainer.experience_years }} лет</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted">Ставка</h6>
+                    <p class="h4 mb-0">{{ trainer.hourly_rate }} ₽/час</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-warning">
+        Профиль тренера ещё не настроен. Обратитесь к администратору.
+    </div>
+{% endif %}
+
+<div class="card shadow-sm">
+    <div class="card-header">Мои предстоящие тренировки</div>
+    <ul class="list-group list-group-flush">
+        {% for tc in upcoming_classes %}
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>{{ tc.name }}</strong><br>
+                        <small class="text-muted">
+                            {{ tc.start_time|date:"d.m.Y H:i" }}–{{ tc.end_time|date:"H:i" }}
+                            · {{ tc.room|default:"зал не назначен" }}
+                        </small>
+                    </div>
+                    <span class="badge bg-primary align-self-center">
+                        {{ tc.enrollments.count }}/{{ tc.max_participants }}
+                    </span>
+                </div>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">Нет запланированных тренировок.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
