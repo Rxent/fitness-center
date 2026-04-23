@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои абонементы{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-card-checklist"></i> Мои абонементы</h2>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Тариф</th>
+                    <th>Период</th>
+                    <th>Посещения</th>
+                    <th>Оплата</th>
+                    <th>Статус</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in subscriptions %}
+                    <tr>
+                        <td><strong>{{ s.plan.name }}</strong><br>
+                            <small class="text-muted">{{ s.plan.get_plan_type_display }}</small>
+                        </td>
+                        <td>{{ s.start_date|date:"d.m.Y" }} – {{ s.end_date|date:"d.m.Y" }}</td>
+                        <td>
+                            {% if s.plan.visits_limit %}
+                                {{ s.visits_used }} / {{ s.plan.visits_limit }}
+                            {% else %}
+                                {{ s.visits_used }} (безлимит)
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% with payment=s.payment %}
+                                {% if payment %}
+                                    {{ payment.amount }} ₽<br>
+                                    <small class="text-muted">{{ payment.get_method_display }}</small>
+                                {% else %}—{% endif %}
+                            {% endwith %}
+                        </td>
+                        <td><span class="badge bg-secondary">{{ s.get_status_display }}</span></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5" class="text-muted text-center">
+                        У вас ещё не было абонементов.
+                        <a href="{% url 'subscriptions:plan_list' %}">Выбрать тариф</a>
+                    </td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

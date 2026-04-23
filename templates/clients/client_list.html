@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Клиенты{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-people"></i> Клиенты</h2>
+
+<form method="get" class="mb-3">
+    <div class="input-group">
+        <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="Поиск по ФИО, логину, email...">
+        <button class="btn btn-primary">Найти</button>
+        {% if query %}
+            <a href="{% url 'clients:list' %}" class="btn btn-outline-secondary">×</a>
+        {% endif %}
+    </div>
+</form>
+
+<div class="table-responsive bg-white shadow-sm rounded">
+    <table class="table mb-0 align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>ФИО</th>
+                <th>Email / телефон</th>
+                <th>Возраст</th>
+                <th>С</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in clients %}
+                <tr>
+                    <td>{{ c.user.get_full_name|default:c.user.username }}</td>
+                    <td>
+                        {{ c.user.email|default:"—" }}<br>
+                        <small class="text-muted">{{ c.user.phone|default:"" }}</small>
+                    </td>
+                    <td>{{ c.age|default:"—" }}</td>
+                    <td>{{ c.registration_date|date:"d.m.Y" }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'clients:detail' c.id %}" class="btn btn-sm btn-outline-primary">Профиль</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5" class="text-muted text-center">Клиенты не найдены.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

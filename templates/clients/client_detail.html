@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ client.user.get_full_name|default:client.user.username }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'clients:list' %}">Клиенты</a></li>
+        <li class="breadcrumb-item active">{{ client.user.get_full_name|default:client.user.username }}</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>{{ client.user.get_full_name|default:client.user.username }}</h5>
+                <dl class="row small mb-0">
+                    <dt class="col-5">Email</dt><dd class="col-7">{{ client.user.email|default:"—" }}</dd>
+                    <dt class="col-5">Телефон</dt><dd class="col-7">{{ client.user.phone|default:"—" }}</dd>
+                    <dt class="col-5">Пол</dt><dd class="col-7">{{ client.get_gender_display|default:"—" }}</dd>
+                    <dt class="col-5">Возраст</dt><dd class="col-7">{{ client.age|default:"—" }}</dd>
+                    <dt class="col-5">Зарегистрирован</dt><dd class="col-7">{{ client.registration_date|date:"d.m.Y" }}</dd>
+                    <dt class="col-5">Адрес</dt><dd class="col-7">{{ client.address|default:"—" }}</dd>
+                    <dt class="col-5">Экстренный контакт</dt><dd class="col-7">{{ client.emergency_contact|default:"—" }}</dd>
+                </dl>
+                {% if client.health_notes %}
+                    <div class="alert alert-warning small mt-3 mb-0">
+                        <strong>Здоровье:</strong> {{ client.health_notes }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header">Абонементы</div>
+            <ul class="list-group list-group-flush">
+                {% for s in subscriptions %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ s.plan.name }}<br>
+                            <small class="text-muted">{{ s.start_date|date:"d.m.Y" }} – {{ s.end_date|date:"d.m.Y" }}</small>
+                        </span>
+                        <span class="badge bg-secondary align-self-center">{{ s.get_status_display }}</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Абонементов нет.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-header">Записи на тренировки</div>
+            <ul class="list-group list-group-flush">
+                {% for e in enrollments %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ e.training_class.name }}<br>
+                            <small class="text-muted">{{ e.training_class.start_time|date:"d.m.Y H:i" }} · {{ e.training_class.trainer|default:"—" }}</small>
+                        </span>
+                        <span class="badge bg-secondary align-self-center">{{ e.get_status_display }}</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Записей нет.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -9,6 +9,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
     path('users/', include('users.urls', namespace='users')),
+    path('clients/', include('clients.urls', namespace='clients')),
+    path('trainers/', include('trainers.urls', namespace='trainers')),
+    path('subscriptions/', include('subscriptions.urls', namespace='subscriptions')),
+    path('schedule/', include('schedule.urls', namespace='schedule')),
 ]
 
 if settings.DEBUG:

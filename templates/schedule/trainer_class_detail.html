@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ tc.name }} — участники{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'schedule:trainer_classes' %}">Мои тренировки</a></li>
+        <li class="breadcrumb-item active">{{ tc.name }}</li>
+    </ol>
+</nav>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h3>{{ tc.name }}</h3>
+        <p class="text-muted">
+            {{ tc.start_time|date:"d.m.Y H:i" }}–{{ tc.end_time|date:"H:i" }}
+            · {{ tc.room|default:"зал не указан" }}
+            · записано {{ enrollments|length }}/{{ tc.max_participants }}
+        </p>
+
+        <form method="post" action="{% url 'schedule:mark_class_status' tc.id %}" class="d-inline-flex gap-2 mb-3">
+            {% csrf_token %}
+            <select name="status" class="form-select form-select-sm">
+                {% for key, label in statuses %}
+                    <option value="{{ key }}" {% if tc.status == key %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-sm btn-primary">Сменить статус</button>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header">Участники</div>
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>Клиент</th><th>Статус</th><th class="text-end">Отметить</th></tr>
+            </thead>
+            <tbody>
+                {% for e in enrollments %}
+                    <tr>
+                        <td>{{ e.client.user.get_full_name|default:e.client.user.username }}</td>
+                        <td><span class="badge bg-secondary">{{ e.get_status_display }}</span></td>
+                        <td class="text-end">
+                            <form method="post" action="{% url 'schedule:mark_enrollment_status' e.id %}" class="d-inline-flex gap-2">
+                                {% csrf_token %}
+                                <select name="status" class="form-select form-select-sm" style="width: auto;">
+                                    {% for key, label in enrollment_statuses %}
+                                        <option value="{{ key }}" {% if e.status == key %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="btn btn-sm btn-outline-primary">Сохранить</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3" class="text-muted text-center">Нет записей.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

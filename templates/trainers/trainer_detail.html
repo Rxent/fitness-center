@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ trainer.user.get_full_name }} — тренер{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'trainers:list' %}">Тренеры</a></li>
+        <li class="breadcrumb-item active">{{ trainer.user.get_full_name|default:trainer.user.username }}</li>
+    </ol>
+</nav>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="d-flex gap-4 align-items-start">
+            {% if trainer.user.photo %}
+                <img src="{{ trainer.user.photo.url }}" class="rounded" width="160" height="160" style="object-fit: cover;">
+            {% else %}
+                <div class="rounded bg-secondary text-white d-flex align-items-center justify-content-center"
+                     style="width: 160px; height: 160px; font-size: 3rem;">
+                    {{ trainer.user.first_name|slice:":1" }}{{ trainer.user.last_name|slice:":1" }}
+                </div>
+            {% endif %}
+            <div class="flex-grow-1">
+                <h3>{{ trainer.user.get_full_name|default:trainer.user.username }}</h3>
+                <p class="text-muted mb-2">Опыт: {{ trainer.experience_years }} лет · Ставка: {{ trainer.hourly_rate }} ₽/час</p>
+                <div class="mb-3">
+                    {% for spec in trainer.specializations.all %}
+                        <span class="badge bg-primary">{{ spec.name }}</span>
+                    {% endfor %}
+                </div>
+                {% if trainer.bio %}<p>{{ trainer.bio|linebreaks }}</p>{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header">Ближайшие тренировки</div>
+    <ul class="list-group list-group-flush">
+        {% for tc in upcoming_classes %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ tc.name }}</strong><br>
+                    <small class="text-muted">{{ tc.start_time|date:"d.m.Y H:i" }} · {{ tc.room|default:"—" }}</small>
+                </div>
+                <a href="{% url 'schedule:class_detail' tc.id %}" class="btn btn-sm btn-outline-primary">
+                    Записаться
+                </a>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">У этого тренера пока нет запланированных тренировок.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
