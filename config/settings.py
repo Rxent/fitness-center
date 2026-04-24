@@ -1,14 +1,24 @@
+import os
 from pathlib import Path
 
 from django.contrib.messages import constants as message_constants
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-your-secret-key-here'
+# Значения берутся из переменных окружения, чтобы продакшн-конфиг
+# отличался от разработки без правки исходников. Для локального запуска
+# есть безопасные значения по умолчанию.
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY', 'django-insecure-dev-only-change-me'
+)
 
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', '1') == '1'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    h.strip() for h in os.environ.get(
+        'DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1'
+    ).split(',') if h.strip()
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,12 +67,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Если задана переменная DATABASE_URL — используем её (обычно это PostgreSQL
+# в Docker/продакшне). Иначе откатываемся на локальный SQLite-файл — удобно
+# для разработки, не требует ничего ставить.
+if os.environ.get('DATABASE_URL'):
+    import dj_database_url
+
+    DATABASES = {
+        'default': dj_database_url.parse(
+            os.environ['DATABASE_URL'], conn_max_age=600
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
