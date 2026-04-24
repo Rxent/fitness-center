@@ -69,6 +69,11 @@
                     {% endif %}
                     {% if user.is_superuser or user.role == 'admin' %}
                         <li class="nav-item">
+                            <a class="nav-link" href="{% url 'reports:index' %}">
+                                <i class="bi bi-bar-chart"></i> Отчёты
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{% url 'admin:index' %}">
                                 <i class="bi bi-gear"></i> Админ-панель
                             </a>

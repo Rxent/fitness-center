@@ -13,6 +13,7 @@ urlpatterns = [
     path('trainers/', include('trainers.urls', namespace='trainers')),
     path('subscriptions/', include('subscriptions.urls', namespace='subscriptions')),
     path('schedule/', include('schedule.urls', namespace='schedule')),
+    path('reports/', include('reports.urls', namespace='reports')),
 ]
 
 if settings.DEBUG:
