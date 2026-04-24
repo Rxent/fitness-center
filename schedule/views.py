@@ -1,3 +1,15 @@
+"""
+View-функции приложения schedule.
+
+Отвечают за показ расписания, запись клиентов на тренировки и управление
+занятиями со стороны тренера. Страницы:
+
+- class_list / class_detail — публичное расписание.
+- enroll / cancel_enrollment — запись и отмена записи (только клиент).
+- my_enrollments — личный кабинет клиента с его записями.
+- trainer_classes / trainer_class_detail — рабочий стол тренера.
+- mark_class_status / mark_enrollment_status — смена статусов тренером.
+"""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
@@ -103,14 +115,29 @@ def _can_see_enrollments(user, tc):
 
 
 def _can_enroll(client, tc: TrainingClass, enrollment: Enrollment | None):
+    """Проверяет, может ли клиент записаться на тренировку.
+
+    Возвращает пару (можно_ли: bool, причина_отказа: str).
+    Если запись разрешена — строка причины пустая.
+
+    Порядок проверок важен: сначала объективные (время, статус тренировки),
+    потом персональные (уже записан, нет абонемента). Это помогает показывать
+    пользователю наиболее релевантное сообщение.
+    """
+    # 1. Тренировка уже идёт или закончилась — записываться поздно.
     if tc.start_time <= timezone.now():
         return False, 'Тренировка уже началась или завершена.'
+    # 2. Тренировка отменена или завершена — запись закрыта.
     if tc.status != 'scheduled':
         return False, f'Тренировка имеет статус «{tc.get_status_display()}».'
+    # 3. Клиент уже записан и не отменял запись.
     if enrollment and enrollment.status != 'cancelled':
         return False, 'Вы уже записаны на эту тренировку.'
+    # 4. Зал заполнен.
     if tc.is_full:
         return False, 'Свободных мест нет.'
+    # 5. У клиента должен быть действующий абонемент на дату сегодняшнюю
+    #    (минимум — чтобы совершить саму запись).
     today = timezone.now().date()
     has_active_sub = Subscription.objects.filter(
         client=client, status='active', end_date__gte=today,
@@ -231,17 +258,28 @@ def mark_class_status(request, pk: int):
 @trainer_required
 @require_POST
 def mark_enrollment_status(request, enrollment_id: int):
+    """Тренер отмечает посещаемость клиента (посетил / пропустил / записан / отмена).
+
+    Если выставляется статус «посетил» (attended) — автоматически
+    увеличивается счётчик использованных посещений у активного абонемента
+    клиента. Так система сама ведёт учёт, сколько тренировок осталось.
+    """
     trainer = request.user.trainer_profile
+    # Запись должна принадлежать тренировке ЭТОГО тренера,
+    # иначе тренер сможет отмечать чужих клиентов.
     enrollment = get_object_or_404(
         Enrollment.objects.select_related('training_class'),
         pk=enrollment_id, training_class__trainer=trainer,
     )
     new_status = request.POST.get('status')
+    # Защита: принимаем только один из валидных статусов, чтобы через
+    # подделку запроса нельзя было записать произвольное значение.
     valid = {key for key, _ in Enrollment.STATUS_CHOICES}
     if new_status in valid:
         enrollment.status = new_status
         enrollment.save(update_fields=['status'])
-        # при отметке «посетил» увеличиваем счётчик посещений активного абонемента
+        # При отметке «посетил» ищем абонемент клиента, который действовал
+        # на дату тренировки, и увеличиваем счётчик посещений.
         if new_status == 'attended':
             active = Subscription.objects.filter(
                 client=enrollment.client, status='active',
