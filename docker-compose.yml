@@ -1,0 +1,38 @@
+# docker-compose поднимает два контейнера: PostgreSQL и приложение Django.
+# Запуск: `docker compose up --build`
+# После первого запуска автоматически выполняются миграции; чтобы наполнить
+# демо-данными, отдельно выполнить `docker compose exec web python manage.py seed_demo`.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-fitness}
+      POSTGRES_USER: ${POSTGRES_USER:-fitness}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fitness}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-fitness}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-secret-change-me}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-1}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-*}
+      DATABASE_URL: postgres://${POSTGRES_USER:-fitness}:${POSTGRES_PASSWORD:-fitness}@db:5432/${POSTGRES_DB:-fitness}
+    volumes:
+      - ./media:/app/media
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:
