@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">{{ report.title }}</h1>
+  <a href="{% url 'reports:index' %}" class="btn btn-outline-secondary btn-sm">← К отчётам</a>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="get" class="row g-3 align-items-end">
+      {% for field in form %}
+        <div class="col-md-3">
+          <label class="form-label">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+        </div>
+      {% endfor %}
+      <div class="col-md-auto">
+        <button type="submit" class="btn btn-primary">Сформировать</button>
+      </div>
+      <div class="col-md-auto">
+        <a class="btn btn-outline-success" href="?{{ request.GET.urlencode }}&format=xlsx">Excel</a>
+        <a class="btn btn-outline-danger" href="?{{ request.GET.urlencode }}&format=pdf">PDF</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% if report.rows %}
+  <div class="table-responsive">
+    <table class="table table-striped table-hover table-bordered align-middle">
+      <thead class="table-primary">
+        <tr>{% for h in report.headers %}<th>{{ h }}</th>{% endfor %}</tr>
+      </thead>
+      <tbody>
+        {% for row in report.rows %}
+          <tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="alert alert-info">Нет данных за выбранный период.</div>
+{% endif %}
+
+{% if report.totals %}
+  <div class="card">
+    <div class="card-header">Итоги</div>
+    <ul class="list-group list-group-flush">
+      {% for name, value in report.totals.items %}
+        <li class="list-group-item d-flex justify-content-between">
+          <span>{{ name }}</span>
+          <strong>{{ value }}</strong>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+{% endblock %}
