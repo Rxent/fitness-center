@@ -1,0 +1,372 @@
+/* ============================================================
+   Тёмная тема для фитнес-центра
+   Цвета:
+     фон          #0f0e17
+     заголовки    #fffffe
+     текст        #a7a9be
+     кнопка       #ff8906
+     текст кнопки #fffffe
+     акцент       #ff8906
+     вторичный    #f25f4c
+     третичный    #e53170
+   ============================================================ */
+
+:root {
+    --bg:        #0f0e17;
+    --surface:   #1a1925;
+    --surface-2: #232132;
+    --border:    #2c2a3e;
+    --headline:  #fffffe;
+    --text:      #a7a9be;
+    --muted:     #6b6c80;
+    --accent:    #ff8906;
+    --accent-2:  #ffa340;
+    --secondary: #f25f4c;
+    --tertiary:  #e53170;
+}
+
+/* ---------- Базовые элементы ---------- */
+html, body {
+    background: var(--bg) !important;
+    color: var(--text);
+}
+
+body.bg-light, .bg-light {
+    background: var(--bg) !important;
+    color: var(--text);
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    color: var(--headline);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+a:hover {
+    color: var(--accent-2);
+    text-decoration: underline;
+}
+
+hr {
+    border-color: var(--border);
+    opacity: 1;
+}
+
+.text-muted, .text-secondary {
+    color: var(--muted) !important;
+}
+
+/* ---------- Навигация ---------- */
+.navbar.bg-dark, .navbar.navbar-dark.bg-dark {
+    background: #0a0913 !important;
+    border-bottom: 1px solid var(--border);
+}
+.navbar-brand {
+    color: var(--accent) !important;
+    font-weight: 700;
+}
+.navbar .nav-link {
+    color: var(--text) !important;
+}
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+    color: var(--accent) !important;
+}
+.navbar .badge.bg-secondary {
+    background: var(--accent) !important;
+    color: var(--headline) !important;
+}
+.dropdown-menu {
+    background: var(--surface);
+    border: 1px solid var(--border);
+}
+.dropdown-item {
+    color: var(--text);
+}
+.dropdown-item:hover, .dropdown-item:focus {
+    background: var(--surface-2);
+    color: var(--accent);
+}
+
+/* ---------- Подвал ---------- */
+footer.bg-dark {
+    background: #0a0913 !important;
+    border-top: 1px solid var(--border);
+    color: var(--muted) !important;
+}
+footer.text-white-50 {
+    color: var(--muted) !important;
+}
+
+/* ---------- Карточки ---------- */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+.card-header, .card-footer {
+    background: var(--surface-2);
+    border-color: var(--border);
+    color: var(--headline);
+}
+.card-title, .card-header h1, .card-header h2,
+.card-header h3, .card-header h4, .card-header h5 {
+    color: var(--headline);
+}
+
+/* ---------- Кнопки ---------- */
+.btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--headline);
+    font-weight: 600;
+}
+.btn-primary:hover, .btn-primary:focus {
+    background: var(--accent-2);
+    border-color: var(--accent-2);
+    color: var(--headline);
+}
+.btn-success {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--headline);
+}
+.btn-success:hover, .btn-success:focus {
+    background: var(--accent-2);
+    border-color: var(--accent-2);
+    color: var(--headline);
+}
+.btn-danger {
+    background: var(--tertiary);
+    border-color: var(--tertiary);
+    color: var(--headline);
+}
+.btn-danger:hover, .btn-danger:focus {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    color: var(--headline);
+}
+.btn-warning {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    color: var(--headline);
+}
+.btn-warning:hover, .btn-warning:focus {
+    background: var(--tertiary);
+    border-color: var(--tertiary);
+    color: var(--headline);
+}
+.btn-secondary {
+    background: var(--surface-2);
+    border-color: var(--border);
+    color: var(--text);
+}
+.btn-secondary:hover {
+    background: var(--border);
+    color: var(--headline);
+}
+.btn-outline-primary {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+.btn-outline-primary:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--headline);
+}
+.btn-outline-secondary {
+    color: var(--text);
+    border-color: var(--border);
+}
+.btn-outline-secondary:hover {
+    background: var(--surface-2);
+    color: var(--headline);
+}
+.btn-outline-danger {
+    color: var(--tertiary);
+    border-color: var(--tertiary);
+}
+.btn-outline-danger:hover {
+    background: var(--tertiary);
+    color: var(--headline);
+}
+.btn-link {
+    color: var(--accent);
+}
+.btn-link:hover {
+    color: var(--accent-2);
+}
+
+/* ---------- Формы ---------- */
+.form-control, .form-select, textarea, input[type="text"],
+input[type="email"], input[type="password"], input[type="number"],
+input[type="date"], input[type="datetime-local"], input[type="search"] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--headline);
+}
+.form-control:focus, .form-select:focus, textarea:focus,
+input:focus {
+    background: var(--surface);
+    border-color: var(--accent);
+    color: var(--headline);
+    box-shadow: 0 0 0 0.2rem rgba(255, 137, 6, 0.25);
+}
+.form-control::placeholder {
+    color: var(--muted);
+}
+.form-label {
+    color: var(--text);
+    font-weight: 500;
+}
+.form-text {
+    color: var(--muted);
+}
+.form-check-input:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* ---------- Таблицы ---------- */
+.table {
+    color: var(--text);
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text);
+    --bs-table-striped-bg: var(--surface);
+    --bs-table-striped-color: var(--text);
+    --bs-table-hover-bg: var(--surface-2);
+    --bs-table-hover-color: var(--headline);
+    --bs-table-border-color: var(--border);
+}
+.table > thead, .table > thead > tr > th {
+    background: var(--surface-2);
+    color: var(--headline);
+    border-color: var(--border);
+}
+.table > tbody > tr {
+    border-color: var(--border);
+}
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background: var(--surface);
+    color: var(--text);
+}
+.table-hover > tbody > tr:hover > * {
+    background: var(--surface-2);
+    color: var(--headline);
+}
+
+/* ---------- Бейджи ---------- */
+.badge.bg-primary { background: var(--accent) !important; color: var(--headline); }
+.badge.bg-success { background: var(--accent) !important; color: var(--headline); }
+.badge.bg-warning { background: var(--secondary) !important; color: var(--headline); }
+.badge.bg-danger  { background: var(--tertiary) !important; color: var(--headline); }
+.badge.bg-secondary { background: var(--surface-2) !important; color: var(--text); }
+.badge.bg-info { background: var(--secondary) !important; color: var(--headline); }
+
+/* ---------- Алёрты ---------- */
+.alert {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+}
+.alert-success {
+    background: rgba(255, 137, 6, 0.12);
+    border-color: var(--accent);
+    color: var(--accent-2);
+}
+.alert-danger, .alert-error {
+    background: rgba(229, 49, 112, 0.12);
+    border-color: var(--tertiary);
+    color: #ff7aa9;
+}
+.alert-warning {
+    background: rgba(242, 95, 76, 0.12);
+    border-color: var(--secondary);
+    color: #ff9f8e;
+}
+.alert-info {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+/* ---------- Прочее ---------- */
+.list-group-item {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+}
+.list-group-item-action:hover {
+    background: var(--surface-2);
+    color: var(--headline);
+}
+
+.modal-content {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.pagination .page-link {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+}
+.pagination .page-link:hover {
+    background: var(--surface-2);
+    color: var(--accent);
+}
+.pagination .page-item.active .page-link {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--headline);
+}
+
+.bg-white { background: var(--surface) !important; }
+.bg-dark  { background: #0a0913 !important; }
+.bg-primary, .text-bg-primary {
+    background: var(--accent) !important;
+    color: var(--headline) !important;
+}
+.bg-success, .text-bg-success {
+    background: var(--secondary) !important;
+    color: var(--headline) !important;
+}
+.bg-warning, .text-bg-warning {
+    background: var(--tertiary) !important;
+    color: var(--headline) !important;
+}
+.bg-info, .text-bg-info {
+    background: var(--accent-2) !important;
+    color: var(--headline) !important;
+}
+.text-bg-primary *, .text-bg-success *,
+.text-bg-warning *, .text-bg-info *,
+.bg-primary *, .bg-success *,
+.bg-warning *, .bg-info * {
+    color: var(--headline) !important;
+}
+.text-dark { color: var(--headline) !important; }
+.text-white { color: var(--headline) !important; }
+.text-primary { color: var(--accent) !important; }
+.text-success { color: var(--secondary) !important; }
+.text-danger  { color: var(--tertiary) !important; }
+.text-warning { color: var(--secondary) !important; }
+.text-info    { color: var(--accent-2) !important; }
+
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+::selection {
+    background: var(--accent);
+    color: var(--headline);
+}
+
+/* ---------- Подсветка для главной страницы ---------- */
+.hero-accent {
+    color: var(--accent);
+}
