@@ -629,8 +629,13 @@ def section_appendix_a(doc, helpers):
             'генерируются Django по моделям, шаблоны представляют собой '
             'разметку, а не исходный код программы.')
 
-    project_root = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), '..', '..'),
+    # Листинги хранятся рядом с content.py в каталоге source_listings/,
+    # чтобы диплом был самодостаточным: полный листинг попадал в документ
+    # независимо от того, какие файлы есть в рабочей копии репозитория.
+    # При необходимости содержимое каталога можно обновить, скопировав
+    # актуальные .py-файлы из исходников проекта.
+    listings_root = os.path.join(
+        os.path.dirname(__file__), 'source_listings',
     )
 
     files = [
@@ -713,7 +718,7 @@ def section_appendix_a(doc, helpers):
 
     counter = 0
     for rel_path, description in files:
-        full_path = os.path.join(project_root, rel_path)
+        full_path = os.path.join(listings_root, rel_path)
         try:
             with open(full_path, 'r', encoding='utf-8') as src:
                 source = src.read()
