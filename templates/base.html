@@ -21,12 +21,52 @@
         </button>
         <div class="collapse navbar-collapse" id="nav">
             <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'schedule:class_list' %}">
+                        <i class="bi bi-calendar-week"></i> Расписание
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'trainers:list' %}">
+                        <i class="bi bi-person-badge"></i> Тренеры
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'subscriptions:plan_list' %}">
+                        <i class="bi bi-card-checklist"></i> Абонементы
+                    </a>
+                </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'users:dashboard' %}">
                             <i class="bi bi-speedometer2"></i> Рабочий стол
                         </a>
                     </li>
+                    {% if user.role == 'client' %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <i class="bi bi-person"></i> Мой кабинет
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'subscriptions:my' %}">Мои абонементы</a></li>
+                                <li><a class="dropdown-item" href="{% url 'schedule:my_enrollments' %}">Мои записи</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if user.role == 'trainer' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'schedule:trainer_classes' %}">
+                                <i class="bi bi-clipboard2-check"></i> Мои тренировки
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if user.is_superuser or user.role == 'admin' or user.role == 'trainer' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'clients:list' %}">
+                                <i class="bi bi-people"></i> Клиенты
+                            </a>
+                        </li>
+                    {% endif %}
                     {% if user.is_superuser or user.role == 'admin' %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'admin:index' %}">

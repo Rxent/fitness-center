@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои записи{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-calendar-check"></i> Мои записи</h2>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header">Предстоящие ({{ upcoming|length }})</div>
+    <ul class="list-group list-group-flush">
+        {% for e in upcoming %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ e.training_class.name }}</strong><br>
+                    <small class="text-muted">
+                        {{ e.training_class.start_time|date:"d.m.Y H:i" }}
+                        · {{ e.training_class.trainer|default:"—" }}
+                        · {{ e.training_class.room|default:"—" }}
+                    </small>
+                </div>
+                <div class="d-flex gap-2 align-items-center">
+                    <span class="badge bg-info">{{ e.get_status_display }}</span>
+                    <a href="{% url 'schedule:class_detail' e.training_class.id %}" class="btn btn-sm btn-outline-primary">
+                        Подробнее
+                    </a>
+                    {% if e.status != 'cancelled' %}
+                        <form method="post" action="{% url 'schedule:cancel' e.training_class.id %}">
+                            {% csrf_token %}
+                            <button class="btn btn-sm btn-outline-danger">Отменить</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">Нет предстоящих записей.
+                <a href="{% url 'schedule:class_list' %}">Выбрать тренировку</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header">История ({{ past|length }})</div>
+    <ul class="list-group list-group-flush">
+        {% for e in past %}
+            <li class="list-group-item d-flex justify-content-between">
+                <div>
+                    <strong>{{ e.training_class.name }}</strong><br>
+                    <small class="text-muted">
+                        {{ e.training_class.start_time|date:"d.m.Y H:i" }}
+                        · {{ e.training_class.trainer|default:"—" }}
+                    </small>
+                </div>
+                <span class="badge bg-secondary align-self-center">{{ e.get_status_display }}</span>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">История пустая.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
